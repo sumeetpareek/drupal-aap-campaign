@@ -34,11 +34,12 @@ function aap_tweaks_node_view_alter(&$build) {
   if ($build['#view_mode'] == 'teaser' && isset($build['links']['disqus'])) {
     unset($build['links']['disqus']);
   }
-  
-  // code for inserting block just above disqus comment 
+
+  // code for inserting block just above disqus comment
   if (isset($build['disqus'])) {
     $build['block'] = array(
-      '#prefix' => '<div class="service-links"><span style="color:blue">This is a block, where flaged message would be shown</span>',
+      '#prefix' => '<div class="service-links"><span style="color:blue">When expressing your views in the comments, please use clean and dignified language, even when you are expressing disagreement.
+                                     Also, we encourage you to <b>Flag</b> any abusive or highly irrelevant comments. Thank you.</span>',
       '#suffix' => '</div>',
       '#weight' => variable_get('disqus_weight', 50)-1,);
   }
@@ -70,7 +71,6 @@ function aap_tweaks_menu() {
     'file' => 'aap_tweaks.pages.inc',
   );
 
-  return $items;
 }
 
 /**
@@ -178,3 +178,4 @@ drupal_add_library('system', 'ui.dialog');
 
 
 */
+

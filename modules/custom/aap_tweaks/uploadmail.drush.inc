@@ -13,12 +13,12 @@ function uploadmail_drush_command() {
 
   $items['uploadmail-list'] = array(
 
-    'description' => 'Upload mail list for subscribing newsletter',
+    'description' => 'Allows importing a list of email addresses present it a file as subscribers to a newsletter category of choice',
     'arguments' => array(
       'file_path' => 'Path of csv file having list of email id',
     ),
     'callback' => 'drush_uploadmail_list',
-    'aliases' => array('uml'),
+    'aliases' => array('import-newsletter-subscribers'),
     'required-arguments' => TRUE,
      
   );
@@ -34,21 +34,23 @@ function drush_uploadmail_list($file_path = NULL) {
   $email_ids = array();
   $row = 1;
   if (($handle = fopen($file_path, "r")) !== FALSE) {
-    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+    
+    while (($data = fgetcsv($handle, 1000, '\n')) !== FALSE) {
       $num = count($data);
       $row++;
       for ($c=0; $c < $num; $c++) {
         $email_ids[] = $data[$c];
       }
     }
+
     fclose($handle);
 
-    foreach (simplenews_categories_load_multiple() as $list) {
+     foreach (simplenews_categories_load_multiple() as $list) {
       $newsletters[$list->tid] = array(
         '#title' => check_plain(_simplenews_newsletter_name($list)),
       );
     }
-
+    
     $selected_newsletter = drush_choice($newsletters, 'Choose a newsletter of which emails have to be suscribed by entering suitable number', '!key');
     $form = array();
     $form_state = array();
@@ -56,7 +58,7 @@ function drush_uploadmail_list($file_path = NULL) {
     $form_state['values']['newsletters'] = array(0 => $selected_newsletter);
     $form_state['values']['emails'] = $email_ids;
     $form_state['values']['language'] = 'en';
-    //subscription_list_add($form, $form_state);
+    subscription_list_add($form, $form_state);
   }
 }
 
